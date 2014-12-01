@@ -19,6 +19,7 @@ setup(name='alot',
           'alot.utils',
           'alot.widgets',
           'alot.foreign',
+          'alot.foreign.retrothread',
           'alot.foreign.urwidtrees'],
       package_data={
           'alot': [
