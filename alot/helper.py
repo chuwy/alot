@@ -2,28 +2,34 @@
 # Copyright (C) 2011-2012  Patrick Totzke <patricktotzke@gmail.com>
 # This file is released under the GNU GPL, version 3 or a later revision.
 # For further details see the COPYING file
-from datetime import timedelta
-from datetime import datetime
+
 from collections import deque
-import subprocess
-import shlex
-import email
-import mimetypes
-import os
-import re
+from datetime import datetime, timedelta
+from email import encoders
 from email.generator import Generator
 from email.mime.audio import MIMEAudio
 from email.mime.base import MIMEBase
 from email.mime.image import MIMEImage
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
-import urwid
+import logging
+import mimetypes
+import os
+import re
+import shlex
+import subprocess
+try:        # python 3
+    from io import StringIO
+    from urllib.parse import unquote
+except ImportError:
+    from cStringIO import StringIO
+    from urllib import unquote
+
 import magic
 from twisted.internet import reactor
 from twisted.internet.protocol import ProcessProtocol
 from twisted.internet.defer import Deferred
-from cStringIO import StringIO
-import logging
+import urwid
 
 
 def split_commandline(s, comments=False, posix=True):
@@ -489,7 +495,7 @@ def mimewrap(path, filename=None, ctype=None):
         part = MIMEBase(maintype, subtype)
         part.set_payload(content)
         # Encode the payload using Base64
-        email.encoders.encode_base64(part)
+        encoders.encode_base64(part)
     # Set the filename parameter
     if not filename:
         filename = os.path.basename(path)

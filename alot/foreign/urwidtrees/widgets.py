@@ -1,13 +1,13 @@
 # Copyright (C) 2013  Patrick Totzke <patricktotzke@gmail.com>
 # This file is released under the GNU GPL, version 3 or a later revision.
 
-import urwid
 import logging
-from urwid import WidgetWrap, ListBox
-from urwid import signals
-from decoration import DecoratedTree, CollapseMixin
-from nested import NestedTree
-from lru_cache import lru_cache
+
+from urwid import ListBox, ListWalker, WidgetWrap, signals
+
+from .decoration import DecoratedTree, CollapseMixin
+from .nested import NestedTree
+from .lru_cache import lru_cache
 
 # The following are used to check dynamically if a tree offers sub-APIs
 
@@ -25,7 +25,7 @@ def implementsCollapseAPI(tree):
     return res
 
 
-class TreeListWalker(urwid.ListWalker):
+class TreeListWalker(ListWalker):
     """
     ListWalker to walk through a class:`Tree`.
 

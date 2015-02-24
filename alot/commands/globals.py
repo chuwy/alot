@@ -1,37 +1,36 @@
 # Copyright (C) 2011-2012  Patrick Totzke <patricktotzke@gmail.com>
 # This file is released under the GNU GPL, version 3 or a later revision.
 # For further details see the COPYING file
-import os
-import code
-from twisted.internet import threads
-from twisted.internet import defer
-import subprocess
-import email
-import urwid
-from twisted.internet.defer import inlineCallbacks
-import logging
-import argparse
-import glob
-from StringIO import StringIO
 
-from alot.commands import Command, registerCommand
-from alot.completion import CommandLineCompleter
-from alot.commands import CommandParseError
-from alot.commands import commandfactory
-from alot.commands import CommandCanceled
-from alot import buffers
-from alot.widgets.utils import DialogBox
-from alot import helper
-from alot.db.errors import DatabaseLockedError
-from alot.completion import ContactsCompleter
-from alot.completion import AccountCompleter
-from alot.completion import TagsCompleter
+
+import argparse
+import code
+try:
+    from email.utils import parseaddr
+    from io import StringIO
+except ImportError:
+    from email.Utils import parseaddr
+    from cStringIO import StringIO
+import glob
+import logging
+import os
+import subprocess
+
+from twisted.internet import threads
+from twisted.internet.defer import inlineCallbacks
+import urwid
+
+from . import Command, CommandCanceled, registerCommand
+from alot import buffers, commands, helper
+from alot.completion import (AccountCompleter, CommandLineCompleter,
+                             ContactsCompleter, TagsCompleter)
+from alot.helper import mailto_to_envelope, split_commandstring
 from alot.db.envelope import Envelope
-from alot import commands
+from alot.db.errors import DatabaseLockedError
 from alot.settings import settings
-from alot.helper import split_commandstring, split_commandline
-from alot.helper import mailto_to_envelope
 from alot.utils.booleanaction import BooleanAction
+from alot.widgets.utils import DialogBox
+
 
 MODE = 'global'
 
@@ -766,7 +765,7 @@ class ComposeCommand(Command):
 
         # add signature
         if not self.omit_signature:
-            name, addr = email.Utils.parseaddr(self.envelope['From'])
+            name, addr = parseaddr(self.envelope['From'])
             account = settings.get_account_by_address(addr)
             if account is not None:
                 if account.signature:
@@ -796,7 +795,7 @@ class ComposeCommand(Command):
         # Figure out whether we should GPG sign messages by default
         # and look up key if so
         sender = self.envelope.get('From')
-        name, addr = email.Utils.parseaddr(sender)
+        name, addr = parseaddr(sender)
         account = settings.get_account_by_address(addr)
         if account:
             self.envelope.sign = account.sign_by_default

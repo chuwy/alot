@@ -1,27 +1,29 @@
 # Copyright (C) 2011-2012  Patrick Totzke <patricktotzke@gmail.com>
 # This file is released under the GNU GPL, version 3 or a later revision.
 # For further details see the COPYING file
-import os
-import email
-import re
-import glob
+
 import email.charset as charset
 charset.add_charset('utf-8', charset.QP, charset.QP, 'utf-8')
+try:
+    from email.Utils import make_msgid
+except ImportError:
+    from email.utils import make_msgid
 from email.encoders import encode_7or8bit
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 from email.mime.application import MIMEApplication
-
-from alot import __version__
+import glob
 import logging
-import alot.helper as helper
-import alot.crypto as crypto
+import os
+import re
+
 import gpgme
-from alot.settings import settings
-from alot.errors import GPGProblem, GPGCode
 
 from .attachment import Attachment
 from .utils import encode_header
+from alot import crypto, helper, __version__
+from alot.settings import settings
+from alot.errors import GPGProblem, GPGCode
 
 
 class Envelope(object):
@@ -260,7 +262,7 @@ class Envelope(object):
         headers = self.headers.copy()
         # add Message-ID
         if 'Message-ID' not in headers:
-            headers['Message-ID'] = [email.Utils.make_msgid()]
+            headers['Message-ID'] = [make_msgid()]
 
         if 'User-Agent' in headers:
             uastring_format = headers['User-Agent'][0]

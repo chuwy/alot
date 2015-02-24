@@ -1,19 +1,19 @@
 # Copyright (C) 2011-2012  Patrick Totzke <patricktotzke@gmail.com>
 # This file is released under the GNU GPL, version 3 or a later revision.
 # For further details see the COPYING file
-import sys
+
 import logging
 import os
-
-import alot
-from alot.settings import settings
-from alot.settings.errors import ConfigError
-from alot.db.manager import DBManager
-from alot.ui import UI
-from alot.commands import *
-from alot.commands import CommandParseError
+import sys
 
 from twisted.python import usage
+
+import alot
+from alot.commands import *
+from alot.db.manager import DBManager
+from alot.settings import settings
+from alot.settings.errors import ConfigError
+from alot.ui import UI
 
 
 class SubcommandOptions(usage.Options):

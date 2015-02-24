@@ -1,19 +1,17 @@
 # Copyright (C) 2011-2012  Patrick Totzke <patricktotzke@gmail.com>
 # This file is released under the GNU GPL, version 3 or a later revision.
 # For further details see the COPYING file
-import urwid
-import logging
-from twisted.internet import reactor, defer
 
-from settings import settings
-from buffers import BufferlistBuffer
-from commands import commandfactory
-from commands import CommandCanceled
-from alot.commands import CommandParseError
-from alot.helper import split_commandline
-from alot.helper import string_decode
-from alot.widgets.globals import CompleteEdit
-from alot.widgets.globals import ChoiceWidget
+import logging
+
+from twisted.internet import reactor, defer
+import urwid
+
+from alot.buffers import BufferlistBuffer
+from alot.commands import CommandCanceled, CommandParseError, commandfactory
+from alot.helper import split_commandline, string_decode
+from alot.settings import settings
+from alot.widgets.globals import ChoiceWidget, CompleteEdit
 
 
 class UI(object):

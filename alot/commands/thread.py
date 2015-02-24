@@ -1,40 +1,38 @@
 # Copyright (C) 2011-2012  Patrick Totzke <patricktotzke@gmail.com>
 # This file is released under the GNU GPL, version 3 or a later revision.
 # For further details see the COPYING file
+
+import argparse
+try:
+    from email.utils import getaddresses, parseaddr
+    from io import StringIO
+except ImportError:
+    from email.Utils import getaddresses, parseaddr
+    from cStringIO import StringIO
+import logging
+import mailcap
 import os
 import re
-import logging
-import tempfile
-import argparse
-from twisted.internet.defer import inlineCallbacks
 import subprocess
-from email.Utils import getaddresses, parseaddr
-from email.message import Message
-import mailcap
-from cStringIO import StringIO
+import tempfile
 
-from alot.commands import Command, registerCommand
-from alot.commands.globals import ExternalCommand
-from alot.commands.globals import FlushCommand
-from alot.commands.globals import ComposeCommand
-from alot.commands.globals import MoveCommand
-from alot.commands.globals import CommandCanceled
-from alot.commands.envelope import SendCommand
+from twisted.internet.defer import inlineCallbacks
+
+from . import Command, registerCommand
+from .globals import (CommandCanceled, ComposeCommand, ExternalCommand,
+                      FlushCommand, MoveCommand)
+from .envelope import SendCommand
 from alot import completion
-from alot.db.utils import decode_header
-from alot.db.utils import encode_header
-from alot.db.utils import extract_headers
-from alot.db.utils import extract_body
+from alot.completion import ContactsCompleter
+from alot.db.utils import (decode_header, encode_header, extract_body,
+                           extract_headers)
 from alot.db.envelope import Envelope
 from alot.db.attachment import Attachment
 from alot.db.errors import DatabaseROError
 from alot.settings import settings
-from alot.helper import parse_mailcap_nametemplate
-from alot.helper import split_commandstring
-from alot.helper import email_as_string
+from alot.helper import (email_as_string, parse_mailcap_nametemplate,
+                         split_commandstring)
 from alot.utils.booleanaction import BooleanAction
-from alot.completion import ContactsCompleter
-
 from alot.widgets.globals import AttachmentWidget
 
 MODE = 'thread'

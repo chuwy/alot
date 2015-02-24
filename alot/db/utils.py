@@ -1,26 +1,27 @@
 # Copyright (C) 2011-2012  Patrick Totzke <patricktotzke@gmail.com>
 # This file is released under the GNU GPL, version 3 or a later revision.
 # For further details see the COPYING file
-import os
+
 import email
-import tempfile
-import re
-from email.header import Header
-import email.charset as charset
+from email import charset
 charset.add_charset('utf-8', charset.QP, charset.QP, 'utf-8')
+from email.header import Header
 from email.iterators import typed_subpart_iterator
 import logging
 import mailcap
-from cStringIO import StringIO
+import os
+import re
+import tempfile
+try:
+    from io import StringIO
+except ImportError:
+    from cStringIO import StringIO
 
-import alot.crypto as crypto
-import alot.helper as helper
+from alot import crypto, helper
 from alot.errors import GPGProblem
 from alot.settings import settings
-from alot.helper import string_sanitize
-from alot.helper import string_decode
-from alot.helper import parse_mailcap_nametemplate
-from alot.helper import split_commandstring
+from alot.helper import (string_sanitize, string_decode,
+                         parse_mailcap_nametemplate, split_commandstring)
 
 X_SIGNATURE_VALID_HEADER = 'X-Alot-OpenPGP-Signature-Valid'
 X_SIGNATURE_MESSAGE_HEADER = 'X-Alot-OpenPGP-Signature-Message'

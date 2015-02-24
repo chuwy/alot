@@ -1,28 +1,30 @@
 # Copyright (C) 2011-2012  Patrick Totzke <patricktotzke@gmail.com>
 # This file is released under the GNU GPL, version 3 or a later revision.
 # For further details see the COPYING file
+
 import argparse
-import os
-import re
+import datetime
+import email
+try:
+    from email.utils import parseaddr, formatdate
+except ImportError:
+    from email.Utils import parseaddr, formatdate
 import glob
 import logging
-import email
+import os
+import re
 import tempfile
-from twisted.internet.defer import inlineCallbacks
-import datetime
 
+from twisted.internet.defer import inlineCallbacks
+
+from . import Command, globals, registerCommand
+from alot import buffers, crypto
 from alot.account import SendingMailFailed, StoreMailError
+from alot.db.errors import DatabaseError
 from alot.errors import GPGProblem, GPGCode
-from alot import buffers
-from alot import commands
-from alot import crypto
-from alot.commands import Command, registerCommand
-from alot.commands import globals
-from alot.helper import string_decode
-from alot.helper import email_as_string
+from alot.helper import email_as_string, string_decode
 from alot.settings import settings
 from alot.utils.booleanaction import BooleanAction
-from alot.db.errors import DatabaseError
 
 
 MODE = 'envelope'
@@ -113,7 +115,7 @@ class SaveCommand(Command):
         envelope = ui.current_buffer.envelope
 
         # determine account to use
-        sname, saddr = email.Utils.parseaddr(envelope.get('From'))
+        sname, saddr = parseaddr(envelope.get('From'))
         account = settings.get_account_by_address(saddr)
         if account is None:
             if not settings.get_accounts():
@@ -130,7 +132,7 @@ class SaveCommand(Command):
         mail = envelope.construct_mail()
         # store mail locally
         # add Date header
-        mail['Date'] = email.Utils.formatdate(localtime=True)
+        mail['Date'] = formatdate(localtime=True)
         path = account.store_draft_mail(email_as_string(mail))
 
         msg = 'draft saved successfully'
@@ -142,14 +144,14 @@ class SaveCommand(Command):
             try:
                 ui.dbman.add_message(path, account.draft_tags)
                 ui.apply_command(globals.FlushCommand())
-                ui.apply_command(commands.globals.BufferCloseCommand())
+                ui.apply_command(globals.BufferCloseCommand())
             except DatabaseError as e:
                 logging.error(e.message)
                 ui.notify('could not index message:\n%s' % e.message,
                           priority='error',
                           block=True)
         else:
-            ui.apply_command(commands.globals.BufferCloseCommand())
+            ui.apply_command(globals.BufferCloseCommand())
 
 
 @registerCommand(MODE, 'send')
@@ -201,7 +203,7 @@ class SendCommand(Command):
 
             try:
                 self.mail = self.envelope.construct_mail()
-                self.mail['Date'] = email.Utils.formatdate(localtime=True)
+                self.mail['Date'] = formatdate(localtime=True)
                 self.mail = email_as_string(self.mail)
             except GPGProblem, e:
                 ui.clear_notify([clearme])
@@ -214,7 +216,7 @@ class SendCommand(Command):
         msg = self.mail
         if not isinstance(msg, email.message.Message):
             msg = email.message_from_string(self.mail)
-        sname, saddr = email.Utils.parseaddr(msg.get('From', ''))
+        sname, saddr = parseaddr(msg.get('From', ''))
         account = settings.get_account_by_address(saddr)
         if account is None:
             if not settings.get_accounts():
@@ -238,7 +240,7 @@ class SendCommand(Command):
             logging.debug('mail sent successfully')
             ui.clear_notify([clearme])
             if self.envelope_buffer is not None:
-                cmd = commands.globals.BufferCloseCommand(self.envelope_buffer)
+                cmd = globals.BufferCloseCommand(self.envelope_buffer)
                 ui.apply_command(cmd)
             ui.notify('mail sent successfully')
 
