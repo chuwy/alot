@@ -176,7 +176,7 @@ def commandfactory(cmdline, mode='global'):
     try:
         args = split_commandstring(cmdline)
     except ValueError as e:
-        raise CommandParseError(e.message)
+        raise CommandParseError(e)
     args = map(lambda x: string_decode(x, 'utf-8'), args)
     logging.debug('ARGS: %s' % args)
     cmdname = args[0]

@@ -570,12 +570,11 @@ def parse_mailto(mailto_str):
     :rtype: (dict(str-->[str,..], str)
     """
     if mailto_str.startswith('mailto:'):
-        import urllib
         to_str, parms_str = mailto_str[7:].partition('?')[::2]
         headers = {}
         body = u''
 
-        to = urllib.unquote(to_str)
+        to = unquote(to_str)
         if to:
             headers['To'] = [to]
 
@@ -583,9 +582,9 @@ def parse_mailto(mailto_str):
             key, value = s.partition('=')[::2]
             key = key.capitalize()
             if key == 'Body':
-                body = urllib.unquote(value)
+                body = unquote(value)
             elif value:
-                headers[key] = [urllib.unquote(value)]
+                headers[key] = [unquote(value)]
         return (headers, body)
     else:
         return (None, None)

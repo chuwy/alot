@@ -162,7 +162,7 @@ class ReplyCommand(Command):
         try:
             from_header, account = determine_sender(mail, 'reply')
         except AssertionError as e:
-            ui.notify(e.message, priority='error')
+            ui.notify(str(e), priority='error')
             return
         envelope.add('From', from_header)
 
@@ -332,7 +332,7 @@ class ForwardCommand(Command):
         try:
             from_header, account = determine_sender(mail, 'reply')
         except AssertionError as e:
-            ui.notify(e.message, priority='error')
+            ui.notify(str(e), priority='error')
             return
         envelope.add('From', from_header)
 
@@ -379,7 +379,7 @@ class BounceMailCommand(Command):
         try:
             resent_from_header, account = determine_sender(mail, 'bounce')
         except AssertionError as e:
-            ui.notify(e.message, priority='error')
+            ui.notify(str(e), priority='error')
             return
         mail['Resent-From'] = resent_from_header
 

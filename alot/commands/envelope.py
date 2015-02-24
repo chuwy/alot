@@ -146,8 +146,9 @@ class SaveCommand(Command):
                 ui.apply_command(globals.FlushCommand())
                 ui.apply_command(globals.BufferCloseCommand())
             except DatabaseError as e:
-                logging.error(e.message)
-                ui.notify('could not index message:\n%s' % e.message,
+                message = str(e)
+                logging.error(message)
+                ui.notify('could not index message:\n%s' % message,
                           priority='error',
                           block=True)
         else:
@@ -205,9 +206,9 @@ class SendCommand(Command):
                 self.mail = self.envelope.construct_mail()
                 self.mail['Date'] = formatdate(localtime=True)
                 self.mail = email_as_string(self.mail)
-            except GPGProblem, e:
+            except GPGProblem as e:
                 ui.clear_notify([clearme])
-                ui.notify(e.message, priority='error')
+                ui.notify(str(e), priority='error')
                 return
 
             ui.clear_notify([clearme])
@@ -488,9 +489,9 @@ class SignCommand(Command):
                 keyid = str(' '.join(self.keyid))
                 try:
                     key = crypto.get_key(keyid, validate=True, sign=True)
-                except GPGProblem, e:
+                except GPGProblem as e:
                     envelope.sign = False
-                    ui.notify(e.message, priority='error')
+                    ui.notify(str(e), priority='error')
                     return
                 envelope.sign_key = key
 
@@ -536,7 +537,7 @@ class EncryptCommand(Command):
                     tmp_key = crypto.get_key(keyid)
                     del envelope.encrypt_keys[crypto.hash_key(tmp_key)]
             except GPGProblem as e:
-                ui.notify(e.message, priority='error')
+                ui.notify(str(e), priority='error')
             if not envelope.encrypt_keys:
                 envelope.encrypt = False
             ui.current_buffer.rebuild()
@@ -575,7 +576,7 @@ class EncryptCommand(Command):
                             self.encrypt_keys.append(keyid)
                         continue
                     else:
-                        ui.notify(e.message, priority='error')
+                        ui.notify(str(e), priority='error')
                         continue
                 envelope.encrypt_keys[crypto.hash_key(key)] = key
             if not envelope.encrypt_keys:

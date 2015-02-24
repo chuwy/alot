@@ -121,8 +121,8 @@ class UI(object):
                 if not self._locked:
                     try:
                         self.apply_commandline(cmdline)
-                    except CommandParseError, e:
-                        self.notify(e.message, priority='error')
+                    except CommandParseError as e:
+                        self.notify(str(e), priority='error')
                 # move keys are always passed
                 elif cmdline in ['move up', 'move down', 'move page up',
                                  'move page down']:
