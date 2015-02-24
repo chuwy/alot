@@ -6,7 +6,6 @@
 Widgets specific to thread mode
 """
 
-
 import logging
 
 import urwid
