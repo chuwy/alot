@@ -150,7 +150,7 @@ class QueryCompleter(Completer):
                 resultlist.append((newtext, newpos))
             return resultlist
         else:
-            matched = filter(lambda t: t.startswith(myprefix), self.keywords)
+            matched = [t for t in self.keywords if t.startswith(myprefix)]
             resultlist = []
             for keyword in matched:
                 newprefix = original[:start] + keyword + ':'
@@ -531,7 +531,7 @@ class PathCompleter(Completer):
             escaped_path = escape(path)
             return escaped_path, len(escaped_path)
 
-        return map(prep, glob.glob(deescape(prefix) + '*'))
+        return [prep(p) for p in glob.glob(deescape(prefix) + '*')]
 
 
 class CryptoKeyCompleter(StringlistCompleter):

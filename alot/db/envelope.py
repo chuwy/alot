@@ -236,7 +236,7 @@ class Envelope(object):
 
             try:
                 encrypted_str = crypto.encrypt(plaintext,
-                                               self.encrypt_keys.values())
+                                               list(self.encrypt_keys.values()))
             except gpgme.GpgmeError as e:
                 raise GPGProblem(str(e), code=GPGCode.KEY_CANNOT_ENCRYPT)
 
@@ -329,7 +329,8 @@ class Envelope(object):
                 to_attach = []
                 for line in self.get_all('Attach'):
                     gpath = os.path.expanduser(line.strip())
-                    to_attach += filter(os.path.isfile, glob.glob(gpath))
+                    to_attach += [p for p in glob.glob(gpath)
+                                  if os.path.isfile(p)]
                 logging.debug('Attaching: %s' % to_attach)
                 for path in to_attach:
                     self.attach(path)

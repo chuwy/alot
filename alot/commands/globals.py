@@ -502,6 +502,8 @@ class TagListCommand(Command):
     def apply(self, ui):
         tags = self.tags or ui.dbman.get_all_tags()
         blists = ui.get_buffers_of_type(buffers.TagListBuffer)
+        if not isinstance(blists, list):
+            blists = list(blists)
         if blists:
             buf = blists[0]
             buf.tags = tags
@@ -580,8 +582,8 @@ class HelpCommand(Command):
             globalmaps, modemaps = settings.get_keybindings(ui.mode)
 
             # build table
-            maxkeylength = len(max((modemaps).keys() + globalmaps.keys(),
-                                   key=len))
+            connected_keys = list(modemaps.keys()) + list(globalmaps.keys())
+            maxkeylength = len(max(connected_keys, key=len))
             keycolumnwidth = maxkeylength + 2
 
             linewidgets = []
@@ -831,7 +833,7 @@ class ComposeCommand(Command):
         if settings.get('compose_ask_tags'):
             comp = TagsCompleter(ui.dbman)
             tagsstring = yield ui.prompt('Tags', completer=comp)
-            tags = filter(lambda x: x, tagsstring.split(','))
+            tags = [x for x in tagsstring.split(',') if x]
             if tags is None:
                 raise CommandCanceled()
 

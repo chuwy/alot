@@ -421,7 +421,7 @@ class UI(object):
         :type t: alot.buffers.Buffer
         :rtype: list
         """
-        return filter(lambda x: isinstance(x, t), self.buffers)
+        return [x for x in self.buffers if isinstance(x, t)]
 
     def clear_notify(self, messages):
         """
@@ -461,8 +461,8 @@ class UI(object):
         :type msg_position: str
         :rtype:  :class:`twisted.defer.Deferred`
         """
-        assert select in choices.values() + [None]
-        assert cancel in choices.values() + [None]
+        assert select in choices.values() or select is None
+        assert cancel in choices.values() or cancel is None
         assert msg_position in ['left', 'above']
 
         d = defer.Deferred()  # create return deferred

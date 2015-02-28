@@ -84,7 +84,8 @@ class BufferlistBuffer(Buffer):
             self.isinitialized = True
 
         lines = list()
-        displayedbuffers = filter(self.filtfun, self.ui.buffers)
+        displayedbuffers = [x for x in self.ui.buffers
+                            if not self.filtfun or self.filtfun(x)]
         for (num, b) in enumerate(displayedbuffers):
             line = BufferlineWidget(b)
             if (num % 2) == 0:

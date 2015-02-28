@@ -47,7 +47,7 @@ class MessageSummaryWidget(urwid.WidgetWrap):
         thread_tags = message.get_thread().get_tags(intersection=True)
         outstanding_tags = set(message.get_tags()).difference(thread_tags)
         tag_widgets = [TagWidget(t, attr, focus_att) for t in outstanding_tags]
-        tag_widgets.sort(tag_cmp, lambda tag_widget: tag_widget.translated)
+        tag_widgets.sort(key=lambda tag_widget: tag_widget.translated)
         for tag_widget in tag_widgets:
             if not tag_widget.hidden:
                 cols.append(('fixed', tag_widget.width(), tag_widget))

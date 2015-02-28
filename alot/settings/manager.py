@@ -310,10 +310,10 @@ class SettingsManager(object):
     def get_mapped_input_keysequences(self, mode='global', prefix=u''):
         # get all bindings in this mode
         globalmaps, modemaps = self.get_keybindings(mode)
-        candidates = globalmaps.keys() + modemaps.keys()
+        candidates = list(globalmaps.keys()) + list(modemaps.keys())
         if prefix is not None:
             prefixs = prefix + ' '
-            cand = filter(lambda x: x.startswith(prefixs), candidates)
+            cand = [x for x in candidates if x.startswith(prefixs)]
             if prefix in candidates:
                 candidates = cand + [prefix]
             else:
